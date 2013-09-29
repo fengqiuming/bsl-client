@@ -1,65 +1,35 @@
+
 new FastClick(document.body);
-window.addEventListener("keydown", function(evt) {
-	if (evt.keyCode === 13) {
-		$("#LoginBtn").trigger("click");
-	}
-});
-$('input').focus(function() {
-	var keyword = $(this).val();
-	if (keyword == "" || keyword == undefined || keyword == null) {
-		$(this).next(".del_content").hide();
-	} else {
-		$(this).next(".del_content").css("display", "inline");
-	}
 
-});
-$('#username,#password').click(function(e) {
-	e.preventDefault();
-	e.stopPropagation();
-});
-
-$("#username_del").click(function() {
-	$(this).parent().hide();
-	$("#username").val("");
-});
-$("#password_del").click(function() {
-	$(this).parent().hide();
-	$("#password").val("");
-});
-$("#username,#password").live("input propertychange", function() {
-	var keyword = $(this).val();
-	if (keyword == "" || keyword == null || keyword == undefined) {
-		$(this).next(".del_content").hide();
-	} else {
-		$(this).next(".del_content").css("display", "inline");
-	}
-
-});
-$("body").click(function() {
-	$(".del_content").hide();
-});
-
-$("#LoginBtn").click(function() {
-	$(this).disabled = "disabled";
+$("#login_btn").click(function() {
+	console.log("点击了登录按键");
 	var username = $("#username").val();
 	var password = $("#password").val();
-	var isRemember = $('#isRemember:checked').val();
 
+	window.localStorage["username"] =username;
+	window.localStorage["password"] =password;
+
+	var isRemember = $('#isRemember:checked').val();
 	if (isRemember === undefined) {
 		isRemember = "false";
 	}
 	cordova.exec(function(data) {
+		console.log("进入exec");
 		data = $.parseJSON(data);
 		if (data.isSuccess === true) {
-			$("#LoginBtn").removeAttr("disabled");
+
 		}
 	}, function(err) {
-
-		err = $.parseJSON(err);
-		$("#LoginBtn").removeAttr("disabled");
 	}, "CubeLogin", "login", [username, password, isRemember]);
 
 });
+
+var bodyHeight = $(window).height();
+$("body").css({
+	'height':bodyHeight+'px',
+	'min-height':bodyHeight+'px'
+});
+
 var app = {
 	initialize: function() {
 		this.bindEvents();
@@ -68,11 +38,9 @@ var app = {
 		document.addEventListener('deviceready', this.onDeviceReady, false);
 	},
 	onDeviceReady: function() {
-
 		app.receivedEvent('deviceready');
 	},
 	receivedEvent: function(id) {
-	
 		cordova.exec(function(data) {
 			data = $.parseJSON(data);
 			$("#username").val(data.username);
